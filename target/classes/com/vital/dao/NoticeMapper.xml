@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vital.dao.NoticeMapper">
+    <resultMap id="BaseResultMap" type="com.vital.po.Notice">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_date" jdbcType="DATE" property="createDate"/>
+        <result column="author" jdbcType="INTEGER" property="author"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.vital.po.Notice">
+        insert into notice (id, create_date, author,
+                            content)
+        values (#{id,jdbcType=INTEGER}, #{createDate,jdbcType=DATE}, #{author,jdbcType=INTEGER},
+                #{content,jdbcType=LONGVARCHAR})
+    </insert>
+    <!--查询所有的公告信息-->
+    <select id="queryNoticeAll" resultType="com.vital.po.Notice" parameterType="String">
+        select * from notice
+        <where>
+            <if test="content!=null and content!=''">
+                and content like '%${content}%'
+            </if>
+        </where>
+        order by create_date desc
+    </select>
+
+
+    <!--根据id查询公告信息-->
+    <select id="queryNoticeById" resultMap="BaseResultMap" parameterType="int">
+        select *
+        from notice
+        where id = #{id}
+    </select>
+
+    <!--删除-->
+    <delete id="deleteNoticeByIds" parameterType="list">
+        delete from notice where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

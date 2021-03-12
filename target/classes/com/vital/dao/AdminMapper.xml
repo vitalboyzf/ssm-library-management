@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vital.dao.AdminMapper">
+    <resultMap id="BaseResultMap" type="com.vital.po.Admin">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , username, password, type
+    </sql>
+    <select id="queryAdminById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from admin
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteAdminById" parameterType="java.lang.Integer">
+        delete
+        from admin
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.vital.po.Admin">
+        insert into admin (id, username, password,
+                           type)
+        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+                #{type,jdbcType=INTEGER})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.vital.po.Admin">
+        update admin
+        set username = #{username,jdbcType=VARCHAR},
+            password = #{password,jdbcType=VARCHAR},
+            type     = #{type,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!--高级查询列表-->
+    <select id="queryAdminInfoAll" resultType="admin" parameterType="admin">
+        select * from admin
+        <where>
+            <if test="username!=null and username !=''">
+                and username like '%${username}%'
+            </if>
+            <if test="type!=null ">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+    <!--      验证管理员用户名密码-->
+    <select id="queryUserByNameAndPassword" resultType="com.vital.po.Admin">
+        select *
+        from admin
+        where username = #{username}
+          and password = #{password}
+    </select>
+</mapper>
